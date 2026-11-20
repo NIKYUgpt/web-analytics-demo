@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Запись на пробное занятие — Пиксель и Байт (учебный сайт)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="metrika.js"></script>
+</head>
+<body>
+  <div class="notice">Учебный сайт. Не вводите настоящие имя и контакты: форма никуда не отправляет данные.</div>
+  <header>
+    <a class="logo" href="index.html">Пиксель&nbsp;и&nbsp;Байт</a>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="kursy.html">Курсы</a>
+      <a class="active" href="zapis.html">Запись</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>Запись на пробное занятие</h1>
+      <p>Оставьте заявку — перезвоним и подберём время.</p>
+    </section>
+    <form class="card" id="signup">
+      <label for="name">Имя</label>
+      <input id="name" name="name" class="ym-disable-keys" placeholder="Например, Тест" required>
+      <label for="contact">Телефон или e-mail</label>
+      <input id="contact" name="contact" class="ym-disable-keys" placeholder="Например, test@example.com" required>
+      <label for="course">Курс</label>
+      <select id="course" name="course">
+        <option value="python">Python с нуля</option>
+        <option value="web">Веб-разработка</option>
+        <option value="data">Анализ данных</option>
+      </select>
+      <p class="hint">Данные никуда не уходят. Поля помечены классом, который просит Вебвизор не записывать нажатия клавиш.</p>
+      <button class="btn" type="submit">Отправить заявку</button>
+    </form>
+  </main>
+  <footer>
+    Контакты: <a href="tel:+70000000000">+7 000 000-00-00</a> · <a href="mailto:hello@example.com">hello@example.com</a><br>
+    Учебный сайт для практических занятий по веб-аналитике.
+  </footer>
+  <script>
+    var course = new URLSearchParams(location.search).get("course");
+    if (course) { document.getElementById("course").value = course; }
+
+    document.getElementById("signup").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      // Цель «успешная отправка формы»: отправляем после проверки полей, а не по клику на кнопку
+      sendGoal("form_submit", { course: document.getElementById("course").value });
+      setTimeout(function () { location.href = "spasibo.html"; }, 300);
+    });
+  </script>
+</body>
+</html>
