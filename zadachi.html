@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Задачи семинара — веб-аналитика (учебный сайт)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="metrika.js?v=2"></script>
+  <style>
+    .task { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 14px 0; }
+    .task h3 { margin: 0 0 6px; font-size: 18px; }
+    .task.done { border-color: #2e9e6b; box-shadow: inset 4px 0 0 #2e9e6b; }
+    .task table { border-collapse: collapse; margin: 8px 0; font-size: 14px; }
+    .task td, .task th { border: 1px solid var(--line); padding: 4px 8px; text-align: right; }
+    .task td:first-child, .task th:first-child { text-align: left; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+    .row input { width: 220px; }
+    .row button { font: inherit; font-size: 15px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+    .row button.hint { background: transparent; color: var(--accent); }
+    .msg { font-size: 15px; }
+    .ok { color: #1f8a55; font-weight: 600; }
+    .bad { color: #c0392b; }
+    .hints p { background: #f1f4fb; border-radius: 8px; padding: 8px 10px; font-size: 15px; margin: 8px 0 0; }
+    .where { font-size: 14px; color: var(--muted); }
+    .where a { color: var(--accent); }
+    .progress { position: sticky; top: 0; background: var(--bg); padding: 8px 0; font-weight: 600; z-index: 2; border-bottom: 1px solid var(--line); }
+    h2 { margin-top: 36px; }
+    label.chk { display: flex; gap: 8px; align-items: center; font-weight: 600; margin-top: 10px; }
+    label.chk input { width: auto; }
+  </style>
+</head>
+<body>
+  <div class="notice">Учебная страница курса веб-аналитики. Ответы проверяются прямо в браузере, никуда не отправляются.</div>
+  <header>
+    <a class="logo" href="index.html">Пиксель&nbsp;и&nbsp;Байт</a>
+    <nav><a href="index.html">Сайт</a><a class="active" href="zadachi.html">Задачи семинара</a></nav>
+  </header>
+  <main>
+    <section class="hero" style="padding-bottom:0">
+      <h1>Задачи семинара 28.11</h1>
+      <p>Часть А — по демо-кабинету Matomo, в любом порядке. Часть Б — свой счётчик в Метрике, по порядку. Застряли — возьмите другую задачу или нажмите «Подсказка». Первая подсказка наводит, вторая почти решает.</p>
+      <p class="where">Кабинет Matomo: <a href="https://demo.matomo.cloud/index.php?module=CoreHome&action=index&idSite=3&period=month&date=2026-10-01#?idSite=3&period=month&date=2026-10-01&category=General_Visitors&subcategory=General_Overview" target="_blank" rel="noopener">demo.matomo.cloud</a>, сайт «Demo - Médiathèque Lumière», период — октябрь 2026. Ответы — числа: дробную часть можно писать через запятую или точку, без знаков % и €.</p>
+    </section>
+    <div class="progress" id="progress">Решено: 0</div>
+
+    <h2>Часть А. Отчёты Matomo, октябрь 2026</h2>
+    <div id="partA"></div>
+
+    <h2>Часть Б. Свой счётчик в Яндекс Метрике (по порядку)</h2>
+    <p class="where">Пошаговая инструкция — в памятке, раздел 6. Эти задачи проверяет преподаватель: отметьте галочку, когда показали результат.</p>
+    <div id="partB"></div>
+  </main>
+  <footer>Учебная страница для практических занятий по веб-аналитике.</footer>
+
+<script>
+const M = "https://demo.matomo.cloud/index.php?module=CoreHome&action=index&idSite=3&period=month&date=2026-10-01#?idSite=3&period=month&date=2026-10-01&category=";
+const CH_TABLE = `<table><tr><th>Канал</th><th>Визиты</th><th>Заказы</th><th>Выручка, €</th></tr>
+<tr><td>Прямой вход</td><td>44 286</td><td>1 294</td><td>20 909,13</td></tr>
+<tr><td>Поисковые движки</td><td>24 548</td><td>925</td><td>10 051,00</td></tr>
+<tr><td>Кампании</td><td>14 095</td><td>475</td><td>7 080,98</td></tr>
+<tr><td>Сайты</td><td>6 973</td><td>244</td><td>2 273,00</td></tr>
+<tr><td>Социальные сети</td><td>6 867</td><td>247</td><td>2 617,00</td></tr>
+<tr><td>AI Assistants</td><td>4 104</td><td>175</td><td>1 888,00</td></tr></table>`;
+
+const A = [
+ {n:1, t:"Сколько визитов было на сайте за октябрь 2026?",
+  w:[["Посетители → Обзор", "General_Visitors&subcategory=General_Overview"]],
+  h:["Нужен показатель «Посещения» в блоке «Обзор посещений».", "Число в строке «Посещения»: шесть цифр, начинается на 100."],
+  a:["497f37bf04a8ba6b"]},
+ {n:2, t:"Какая доля визитов (в %) пришлась на канал «Прямой вход»? Округлите до десятых.",
+  w:[["Источники → Все каналы", "Referrers_Referrers&subcategory=Referrers_WidgetGetAll"]],
+  h:["Доля = визиты канала / все визиты × 100. Все визиты — из задачи 1.", "44 286 / 100 873 × 100 = ?"],
+  a:["0099f26dde5ffb45","fa1e5df162d9bc2d"]},
+ {n:3, t:"У какого канала самая высокая конверсия визитов в заказ? Напишите название канала так, как в таблице." + CH_TABLE,
+  w:[],
+  h:["Конверсия = заказы / визиты. Посчитайте для каждой строки, не только для самых больших каналов.", "У маленького канала внизу таблицы: 175 / 4 104 ≈ 4,26 %."],
+  a:["7537b76514d3fb22","45eed6504c1497db","285ba9bc2e798c42","6277591f843454d0","5e129af1e0aa13bc"]},
+ {n:4, t:"Какой средний чек (€) по всему сайту за октябрь? Округлите до сотых. Данные — таблица из задачи 3.",
+  w:[["Эл. коммерция → Обзор", "Goals_Ecommerce&subcategory=General_Overview"]],
+  h:["Средний чек = вся выручка / все заказы. Сложите выручку и заказы по всем каналам.", "44 819,11 / 3 360 = ?"],
+  a:["0de509d2c7ce9415"]},
+ {n:5, t:"В отчёте «Кампании» есть кампания с 0 визитов, но с заказом. Найдите её и посчитайте выручку на визит канала «Кампании» без этой кампании (€, до тысячных). Данные канала — в таблице задачи 3.",
+  w:[["Источники → Кампании", "Referrers_Referrers&subcategory=Referrers_Campaigns"]],
+  h:["Выручка на визит = выручка / визиты. Из выручки канала вычтите выручку подозрительной кампании; визиты не меняются (у неё их 0).", "(7 080,98 − 1 999,98) / 14 095 = ?"],
+  a:["5e83a05896b79069","9c04a4148cbe78f5"]},
+ {n:6, t:"Найдите в журнале заказов заказ на 1 999,98 €. Какой у него номер? (Ссылка открывает журнал сразу с фильтром «заказы от 500 €».)",
+  w:[["Эл. коммерция → Лог эл. заказов, заказы ≥ 500 €", "Goals_Ecommerce&subcategory=Goals_EcommerceLog&segment=revenueOrder%3E%3D500"]],
+  h:["Номер заказа написан в скобках после слов «Электронный заказ».", "Номер начинается с ORCA-."],
+  a:["a34a0533f428d3dc"]},
+ {n:7, t:"Воронка «Продажи»: кабинет показывает конверсию воронки 13,2 %. Какое число стоит в знаменателе этой конверсии?",
+  w:[["Funnels → Продажи", "Funnels_Funnels&subcategory=103"]],
+  h:["1 224 / 5 997 даёт не 13,2 %. Посмотрите столбец «Entries» (входы): в воронку входят не только на первом шаге.", "Шаг 1 необязательный. Сложите входы на шаге 1 и на шаге 2."],
+  a:["56954aa08e8941ef"]},
+ {n:8, t:"Какой переход в воронке «Продажи» самый слабый? Укажите его конверсию в % (до десятых).",
+  w:[["Funnels → Продажи", "Funnels_Funnels&subcategory=103"]],
+  h:["Для каждого шага: «перешли дальше» / «визиты на шаге».", "Корзина: 2 150 / 5 916."],
+  a:["cae14da724ab730a"]},
+ {n:9, t:"Посетители → Устройства: какая доля отказов (%) у типа устройства «Неизвестно»? До десятых. Что это говорит о таких визитах?",
+  w:[["Посетители → Устройства", "General_Visitors&subcategory=DevicesDetection_Devices"]],
+  h:["Найдите строку «Неизвестно» и столбец «Показатель отказов». Если он округлён, посчитайте сами: визиты с отказом / визиты.", "4 782 / 4 785 × 100. Подумайте, кто заходит на одну страницу и никогда ничего не покупает."],
+  a:["7866a5f6c29eefa6","58d67646c5f1d867","954f3e6f06911ba5"]},
+ {n:10, t:"В какой день октября было больше всего визитов? Ответ — число месяца.",
+  w:[["Посетители → Обзор, график по дням", "General_Visitors&subcategory=General_Overview"]],
+  h:["Поменяйте период на «День» и посмотрите график за месяц или выберите таблицу под графиком.", "Это среда в середине месяца: больше 5 000 визитов."],
+  a:["f81055142aced4b2","4241815d479e1f82","de0c75a9a3a2838f","2c0092d7f5836655"]},
+ {n:11, t:`A/B-тест кнопки на главной. Трафик делили на три равные части. <b>Original и control — одна и та же страница.</b>
+<table><tr><th>Вариант</th><th>Визиты</th><th>Конверсии</th></tr>
+<tr><td>Original</td><td>30 356</td><td>3 633</td></tr><tr><td>benefice</td><td>29 907</td><td>3 559</td></tr><tr><td>control</td><td>28 162</td><td>3 030</td></tr></table>
+Посчитайте χ² для числа визитов: χ² = Σ (факт − ожидание)² / ожидание. Ответ — целое число. Порог для трёх групп — 5,99. Что это значит для теста?`,
+  w:[["A/B Tests → AccueilHeroCTA", "AbTesting_Experiments&subcategory=14"]],
+  h:["Ожидание = все визиты / 3. Для каждого варианта: (факт − ожидание)², сложите и разделите на ожидание.", "Ожидание 29 475; отклонения +881, +432, −1 313."],
+  a:["51a73242f458a4d7","57f30e7bb321ebc5","9aa36ad37210717f","a9728f74ee9e469c"]},
+];
+
+const B = [
+ {n:12, t:"Копия учебного сайта у вас на GitHub Pages: Fork репозитория → Settings → Pages → main / root. Сайт открывается по адресу <code>ваш-логин.github.io/web-analytics-demo</code>."},
+ {n:13, t:"Свой счётчик в Метрике; номер вписан в <code>metrika.js</code>. В F12 → Network по фильтру <code>watch</code> виден запрос с <b>вашим</b> номером."},
+ {n:14, t:"Цели в Метрике: <code>form_submit</code> и <code>course_select</code> (тип «Целевое событие»), «Посещение страниц» с URL <code>spasibo</code>. В консоли браузера при отправке формы видна строка <code>[учебный сайт] цель: form_submit</code>."},
+ {n:15, t:"Свой обработчик: новая кнопка или ссылка с атрибутом <code>data-goal=\"…\"</code> и цель с тем же идентификатором в Метрике."},
+ {n:16, t:"Три UTM-ссылки на свой сайт, одна отличается только регистром (<code>telegram</code> / <code>Telegram</code>). Зайти по ним с разных браузеров или устройств, через 10–15 минут найти в Отчёты → Источники → Метки UTM."},
+ {n:17, t:"Ответы по своим данным: сколько визитов и посетителей показала Метрика и почему не столько, сколько было переходов; конверсия в <code>form_submit</code> с числителем и знаменателем."},
+];
+
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem("wa28solved") || "{}"); } catch (e) {}
+function save() { try { localStorage.setItem("wa28solved", JSON.stringify(solved)); } catch (e) {} }
+
+function norm(s) {
+  return s.trim().toLowerCase().replace(/[\s ]/g, "").replace(/,/g, ".").replace(/[%€]/g, "").replace(/ё/g, "е");
+}
+async function h16(s) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("wa28:" + s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+}
+function progress() {
+  const a = A.filter(x => solved[x.n]).length, b = B.filter(x => solved[x.n]).length;
+  document.getElementById("progress").textContent = `Решено: часть А — ${a} из ${A.length}, часть Б — ${b} из ${B.length}`;
+}
+
+function renderA() {
+  const root = document.getElementById("partA");
+  for (const x of A) {
+    const d = document.createElement("div");
+    d.className = "task" + (solved[x.n] ? " done" : "");
+    const where = x.w.map(([t, q]) => `<a href="${M + q}" target="_blank" rel="noopener">${t}</a>`).join(" · ");
+    d.innerHTML = `<h3>Задача ${x.n}</h3><div>${x.t}</div>
+      ${where ? `<p class="where">Где смотреть: ${where}</p>` : ""}
+      <div class="row"><input placeholder="Ответ" aria-label="Ответ на задачу ${x.n}">
+      <button class="go">Проверить</button><button class="hint">Подсказка</button><span class="msg"></span></div>
+      <div class="hints"></div>`;
+    const inp = d.querySelector("input"), msg = d.querySelector(".msg");
+    let shown = 0;
+    if (solved[x.n]) { msg.textContent = "Решено ✓"; msg.className = "msg ok"; }
+    async function check() {
+      if (!inp.value.trim()) return;
+      const h = await h16(norm(inp.value));
+      if (x.a.includes(h)) {
+        solved[x.n] = true; save(); d.classList.add("done");
+        msg.textContent = "Верно ✓"; msg.className = "msg ok";
+        if (window.sendGoal) sendGoal("task_solved", { task: x.n });
+      } else { msg.textContent = "Пока нет — проверьте расчёт или возьмите подсказку"; msg.className = "msg bad"; }
+      progress();
+    }
+    d.querySelector(".go").onclick = check;
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    d.querySelector(".hint").onclick = () => {
+      if (shown < x.h.length) {
+        const p = document.createElement("p");
+        p.textContent = `Подсказка ${shown + 1}: ${x.h[shown]}`;
+        d.querySelector(".hints").appendChild(p); shown++;
+      }
+    };
+    root.appendChild(d);
+  }
+}
+function renderB() {
+  const root = document.getElementById("partB");
+  for (const x of B) {
+    const d = document.createElement("div");
+    d.className = "task" + (solved[x.n] ? " done" : "");
+    d.innerHTML = `<h3>Задача ${x.n}</h3><div>${x.t}</div>
+      <label class="chk"><input type="checkbox" ${solved[x.n] ? "checked" : ""}> Показал(а) преподавателю</label>`;
+    d.querySelector("input").onchange = e => {
+      solved[x.n] = e.target.checked; save(); d.classList.toggle("done", e.target.checked); progress();
+    };
+    root.appendChild(d);
+  }
+}
+renderA(); renderB(); progress();
+</script>
+</body>
+</html>
